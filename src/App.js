@@ -106,7 +106,7 @@ function App() {
     <AppContext.Provider value={{ db, auth, userId, showUserMessage, setCurrentPage }}>
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-rose-50 font-inter flex flex-col">
         {/* Header with back button */}
-        {currentPage !== 'onboarding' && currentPage !== 'home-1' && (
+        {currentPage !== 'onboarding' && currentPage !== 'home' && (
           <div className="p-4 bg-white shadow-md flex items-center justify-between">
             <button
               onClick={() => setCurrentPage('home')}
