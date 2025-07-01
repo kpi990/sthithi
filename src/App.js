@@ -1,9 +1,7 @@
 import React, { useState, useEffect, createContext, useContext, useRef } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
-// Removed getDoc, setDoc, deleteDoc, where, getDocs as they were unused
-import { getFirestore, addDoc, updateDoc, onSnapshot, collection, query, serverTimestamp } from 'firebase/firestore';
-// Removed Briefcase, Clock as they were unused
+import { getFirestore, addDoc, updateDoc, onSnapshot, collection, query, serverTimestamp, doc } from 'firebase/firestore'; 
 import { ChevronLeft, Home, BookOpen, Smile, Headphones, Heart, Edit, Calendar, Zap, Sun, Cloud, Droplet, Wind, Moon, Star, MessageSquare, User, Video, Mic, MessageCircle, Sparkles, Send } from 'lucide-react';
 
 // Context for Firebase and User
@@ -12,7 +10,6 @@ const AppContext = createContext(null);
 // Tailwind CSS is assumed to be available
 function App() {
   const [currentPage, setCurrentPage] = useState('onboarding'); // 'onboarding', 'home', 'meditation', 'mood', 'relaxation', 'calm', 'journal', 'therapy', 'affirmation', 'talk-to-ai'
-  // Removed firebaseApp state as it's not directly used after initialization and caused unused var error
   const [db, setDb] = useState(null);
   const [auth, setAuth] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -23,7 +20,6 @@ function App() {
   // Firebase Initialization and Authentication
   useEffect(() => {
     try {
-      // Direct usage of __app_id and __firebase_config to avoid unused variable warning
       const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
 
       const app = initializeApp(firebaseConfig);
@@ -45,7 +41,6 @@ function App() {
             } else {
               await signInAnonymously(authInstance);
             }
-            // User will be set by onAuthStateChanged listener
           } catch (error) {
             console.error("Firebase Auth Error:", error);
             showUserMessage(`Authentication failed: ${error.message}`);
@@ -71,7 +66,6 @@ function App() {
     setModalMessage('');
   };
 
-  // Render different pages based on currentPage state
   const renderPage = () => {
     if (!isAuthReady) {
       return (
@@ -181,8 +175,6 @@ const OnboardingScreen = ({ onComplete }) => {
     {
       title: "Welcome to Sthiti",
       description: "Your path to mindful stability.",
-      // Placeholder for Sthiti logo. Replace with your hosted image:
-      // <img src="path/to/Sthiti.jpg" alt="Sthiti Logo" className="w-32 h-32 object-contain" />
       image: (
         <div className="flex flex-col items-center justify-center">
           <Heart size={80} className="text-red-500 mb-2" />
@@ -242,12 +234,10 @@ const OnboardingScreen = ({ onComplete }) => {
 // Home Screen
 const HomeScreen = ({ setCurrentPage }) => {
   const { userId } = useContext(AppContext);
-  const [userName] = useState("Mindful User"); // Removed setUserName as it was unused
+  const [userName] = useState("Mindful User");
 
   useEffect(() => {
     if (userId) {
-      // In a real app, you'd fetch user's name from Firestore profile
-      // For now, it's a placeholder.
       console.log("User ID on Home Screen:", userId);
     }
   }, [userId]);
