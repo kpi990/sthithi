@@ -22,6 +22,11 @@ function App() {
     try {
       const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
 
+      // Explicitly check for projectId within the firebaseConfig
+      if (!firebaseConfig.projectId) {
+        throw new Error("Firebase 'projectId' is missing in the configuration. Please ensure your Firebase project is correctly set up and linked in your Netlify environment variables (e.g., via __firebase_config).");
+      }
+
       const app = initializeApp(firebaseConfig);
       const firestore = getFirestore(app);
       const authInstance = getAuth(app);
@@ -52,6 +57,7 @@ function App() {
       return () => unsubscribe();
     } catch (error) {
       console.error("Firebase initialization error:", error);
+      // Display the specific error message from the thrown error
       showUserMessage(`App initialization failed: ${error.message}`);
     }
   }, []);
@@ -1110,4 +1116,3 @@ const TalkToAI = () => {
 };
 
 export default App;
-
