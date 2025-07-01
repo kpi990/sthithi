@@ -1,7 +1,6 @@
 import React, { useState, useEffect, createContext, useContext, useRef } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
-// Added 'doc' back to the imports
 import { getFirestore, addDoc, updateDoc, onSnapshot, collection, query, serverTimestamp, doc } from 'firebase/firestore'; 
 import { ChevronLeft, Home, BookOpen, Smile, Headphones, Heart, Edit, Calendar, Zap, Sun, Cloud, Droplet, Wind, Moon, Star, MessageSquare, User, Video, Mic, MessageCircle, Sparkles, Send } from 'lucide-react';
 
