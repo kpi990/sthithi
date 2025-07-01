@@ -1,8 +1,8 @@
 import React, { useState, useEffect, createContext, useContext, useRef } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
-import { ChevronLeft, Home, BookOpen, Smile, Headphones, Heart, Edit, Calendar, Zap, Sun, Cloud, Droplet, Wind, Moon, Star, MessageSquare, Briefcase, User, Clock, Video, Mic, MessageCircle, Sparkles, Send } from 'lucide-react';
+import { getFirestore, addDoc, updateDoc, onSnapshot, collection, query, serverTimestamp } from 'firebase/firestore'; // Removed getDoc, setDoc, deleteDoc, where, getDocs
+import { ChevronLeft, Home, BookOpen, Smile, Headphones, Heart, Edit, Calendar, Zap, Sun, Cloud, Droplet, Wind, Moon, Star, MessageSquare, User, Video, Mic, MessageCircle, Sparkles, Send } from 'lucide-react'; // Removed Briefcase, Clock
 
 // Context for Firebase and User
 const AppContext = createContext(null);
@@ -10,7 +10,7 @@ const AppContext = createContext(null);
 // Tailwind CSS is assumed to be available
 function App() {
   const [currentPage, setCurrentPage] = useState('onboarding'); // 'onboarding', 'home', 'meditation', 'mood', 'relaxation', 'calm', 'journal', 'therapy', 'affirmation', 'talk-to-ai'
-  const [firebaseApp, setFirebaseApp] = useState(null);
+  // Removed firebaseApp state as it's not directly used after initialization
   const [db, setDb] = useState(null);
   const [auth, setAuth] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -21,14 +21,14 @@ function App() {
   // Firebase Initialization and Authentication
   useEffect(() => {
     try {
-      const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+      // Direct usage of __app_id and __firebase_config to avoid unused variable warning
       const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
 
       const app = initializeApp(firebaseConfig);
       const firestore = getFirestore(app);
       const authInstance = getAuth(app);
 
-      setFirebaseApp(app);
+      // setFirebaseApp(app); // Removed this setter as firebaseApp state was unused
       setDb(firestore);
       setAuth(authInstance);
 
@@ -241,7 +241,7 @@ const OnboardingScreen = ({ onComplete }) => {
 // Home Screen
 const HomeScreen = ({ setCurrentPage }) => {
   const { userId } = useContext(AppContext);
-  const [userName, setUserName] = useState("Mindful User"); // Placeholder for personalization
+  const [userName] = useState("Mindful User"); // Removed setUserName as it was unused
 
   useEffect(() => {
     if (userId) {
@@ -453,7 +453,7 @@ const MoodTracker = () => {
 
   useEffect(() => {
     if (db && userId) {
-      const moodsCollectionRef = collection(db, `artifacts/${__app_id}/users/${userId}/moods`);
+      const moodsCollectionRef = collection(db, `artifacts/${typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'}/users/${userId}/moods`);
       const q = query(moodsCollectionRef);
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -483,7 +483,7 @@ const MoodTracker = () => {
     }
 
     try {
-      const moodsCollectionRef = collection(db, `artifacts/${__app_id}/users/${userId}/moods`);
+      const moodsCollectionRef = collection(db, `artifacts/${typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'}/users/${userId}/moods`);
       await addDoc(moodsCollectionRef, {
         mood: selectedMood,
         timestamp: serverTimestamp(),
@@ -625,7 +625,7 @@ const Journaling = () => {
 
   useEffect(() => {
     if (db && userId) {
-      const journalCollectionRef = collection(db, `artifacts/${__app_id}/users/${userId}/journalEntries`);
+      const journalCollectionRef = collection(db, `artifacts/${typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'}/users/${userId}/journalEntries`);
       const q = query(journalCollectionRef);
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -655,7 +655,7 @@ const Journaling = () => {
     }
 
     try {
-      const journalCollectionRef = collection(db, `artifacts/${__app_id}/users/${userId}/journalEntries`);
+      const journalCollectionRef = collection(db, `artifacts/${typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'}/users/${userId}/journalEntries`);
       await addDoc(journalCollectionRef, {
         content: journalEntry,
         timestamp: serverTimestamp(),
@@ -700,7 +700,7 @@ const Journaling = () => {
         const insight = result.candidates[0].content.parts[0].text;
 
         // Update the Firestore document with the AI insight
-        const entryDocRef = doc(db, `artifacts/${__app_id}/users/${userId}/journalEntries`, entryId);
+        const entryDocRef = doc(db, `artifacts/${typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'}/users/${userId}/journalEntries`, entryId);
         await updateDoc(entryDocRef, { aiInsight: insight });
 
         showUserMessage("AI insight generated and added to your entry!");
