@@ -1,8 +1,10 @@
 import React, { useState, useEffect, createContext, useContext, useRef } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, addDoc, updateDoc, onSnapshot, collection, query, serverTimestamp } from 'firebase/firestore'; // Removed getDoc, setDoc, deleteDoc, where, getDocs
-import { ChevronLeft, Home, BookOpen, Smile, Headphones, Heart, Edit, Calendar, Zap, Sun, Cloud, Droplet, Wind, Moon, Star, MessageSquare, User, Video, Mic, MessageCircle, Sparkles, Send } from 'lucide-react'; // Removed Briefcase, Clock
+// Removed getDoc, setDoc, deleteDoc, where, getDocs as they were unused
+import { getFirestore, addDoc, updateDoc, onSnapshot, collection, query, serverTimestamp } from 'firebase/firestore';
+// Removed Briefcase, Clock as they were unused
+import { ChevronLeft, Home, BookOpen, Smile, Headphones, Heart, Edit, Calendar, Zap, Sun, Cloud, Droplet, Wind, Moon, Star, MessageSquare, User, Video, Mic, MessageCircle, Sparkles, Send } from 'lucide-react';
 
 // Context for Firebase and User
 const AppContext = createContext(null);
@@ -10,7 +12,7 @@ const AppContext = createContext(null);
 // Tailwind CSS is assumed to be available
 function App() {
   const [currentPage, setCurrentPage] = useState('onboarding'); // 'onboarding', 'home', 'meditation', 'mood', 'relaxation', 'calm', 'journal', 'therapy', 'affirmation', 'talk-to-ai'
-  // Removed firebaseApp state as it's not directly used after initialization
+  // Removed firebaseApp state as it's not directly used after initialization and caused unused var error
   const [db, setDb] = useState(null);
   const [auth, setAuth] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -28,7 +30,6 @@ function App() {
       const firestore = getFirestore(app);
       const authInstance = getAuth(app);
 
-      // setFirebaseApp(app); // Removed this setter as firebaseApp state was unused
       setDb(firestore);
       setAuth(authInstance);
 
