@@ -19,20 +19,18 @@ function App() {
 
   // Firebase Initialization and Authentication
   useEffect(() => {
-    let firebaseAppInstance;
     let authInstance;
     let firestoreInstance;
 
     try {
-      // Attempt to parse firebaseConfig from the global __firebase_config variable
-      const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+      // Re-introducing parsing of __firebase_config for Canvas environment
+      const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
 
-      // Explicitly check for projectId within the firebaseConfig
-      if (!firebaseConfig.projectId) {
-        throw new Error("Firebase 'projectId' is missing in the configuration. Please ensure your Firebase project is correctly set up and linked in your Netlify environment variables (e.g., via __firebase_config).");
+      if (!firebaseConfig || !firebaseConfig.projectId) {
+        throw new Error("Firebase configuration (projectId) is missing. Ensure __firebase_config is set correctly in your environment.");
       }
 
-      firebaseAppInstance = initializeApp(firebaseConfig);
+      const firebaseAppInstance = initializeApp(firebaseConfig); // Pass the config explicitly
       firestoreInstance = getFirestore(firebaseAppInstance);
       authInstance = getAuth(firebaseAppInstance);
 
@@ -1038,7 +1036,7 @@ const TalkToAI = () => {
       console.error("Error talking to AI:", error);
       showUserMessage(`Error communicating with AI: ${error.message}`);
       setMessages((prevMessages) => [...prevMessages, { sender: 'ai', text: "I'm sorry, I encountered an error. Please try again." }]);
-    } finally {
+      } finally {
       setIsSending(false);
     }
   };
