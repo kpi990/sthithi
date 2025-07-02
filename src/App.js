@@ -19,19 +19,22 @@ function App() {
 
   // Firebase Initialization and Authentication
   useEffect(() => {
-    try {
-      const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+    let authInstance;
+    let firestoreInstance;
 
-      // Explicitly check for projectId within the firebaseConfig
-      if (!firebaseConfig.projectId) {
-        throw new Error("Firebase 'projectId' is missing in the configuration. Please ensure your Firebase project is correctly set up and linked in your Netlify environment variables (e.g., via __firebase_config).");
+    try {
+      // Re-introducing parsing of __firebase_config for Canvas environment
+      const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+
+      if (!firebaseConfig || !firebaseConfig.projectId) {
+        throw new Error("Firebase configuration (projectId) is missing. Ensure __firebase_config is set correctly in your environment.");
       }
 
-      const app = initializeApp(firebaseConfig);
-      const firestore = getFirestore(app);
-      const authInstance = getAuth(app);
+      const firebaseAppInstance = initializeApp(firebaseConfig); // Pass the config explicitly
+      firestoreInstance = getFirestore(firebaseAppInstance);
+      authInstance = getAuth(firebaseAppInstance);
 
-      setDb(firestore);
+      setDb(firestoreInstance);
       setAuth(authInstance);
 
       const unsubscribe = onAuthStateChanged(authInstance, async (user) => {
@@ -57,10 +60,9 @@ function App() {
       return () => unsubscribe();
     } catch (error) {
       console.error("Firebase initialization error:", error);
-      // Display the specific error message from the thrown error
       showUserMessage(`App initialization failed: ${error.message}`);
     }
-  }, []);
+  }, []); // Empty dependency array means this runs once on mount
 
   const showUserMessage = (message) => {
     setModalMessage(message);
@@ -1034,7 +1036,7 @@ const TalkToAI = () => {
       console.error("Error talking to AI:", error);
       showUserMessage(`Error communicating with AI: ${error.message}`);
       setMessages((prevMessages) => [...prevMessages, { sender: 'ai', text: "I'm sorry, I encountered an error. Please try again." }]);
-    } finally {
+      } finally {
       setIsSending(false);
     }
   };
