@@ -17,14 +17,27 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
+  // TEMPORARY: Hardcoded Firebase Config for Debugging
+  // This is NOT recommended for production. We will remove this later.
+  const hardcodedFirebaseConfig = {
+    apiKey: "AIzaSyBrVwMu6qvRLck6nUa_Ins6GYOcWg9VoiI",
+    authDomain: "sthithi-mindfulness.firebaseapp.com",
+    projectId: "sthithi-mindfulness",
+    storageBucket: "sthithi-mindfulness.firebasestorage.app",
+    messagingSenderId: "452864433620",
+    appId: "1:452864433620:web:a2f88ac754adbf23460a41",
+    measurementId: "G-C0RRVSHZM4"
+  };
+
   // Firebase Initialization and Authentication
   useEffect(() => {
     try {
-      const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+      // Use the hardcoded config for debugging
+      const firebaseConfig = hardcodedFirebaseConfig;
 
       // Explicitly check for projectId within the firebaseConfig
       if (!firebaseConfig.projectId) {
-        throw new Error("Firebase 'projectId' is missing in the configuration. Please ensure your Firebase project is correctly set up and linked in your Netlify environment variables (e.g., via __firebase_config).");
+        throw new Error("Firebase 'projectId' is missing in the configuration. This should not happen with hardcoded config.");
       }
 
       const app = initializeApp(firebaseConfig);
@@ -41,6 +54,7 @@ function App() {
         } else {
           console.log("No user, attempting anonymous sign-in...");
           try {
+            // Use the Canvas-provided token if available, otherwise anonymous sign-in
             if (typeof __initial_auth_token !== 'undefined') {
               await signInWithCustomToken(authInstance, __initial_auth_token);
             } else {
@@ -60,7 +74,7 @@ function App() {
       // Display the specific error message from the thrown error
       showUserMessage(`App initialization failed: ${error.message}`);
     }
-  }, []);
+  }, []); // Empty dependency array means this runs once on mount
 
   const showUserMessage = (message) => {
     setModalMessage(message);
